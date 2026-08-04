@@ -2962,6 +2962,11 @@ export function App(): React.JSX.Element {
         aiBusy={aiBusy}
         chat={chat}
         historicChat={historicChat}
+        aiSettings={aiSettings}
+        onChangeAiSettings={(next) => {
+          setAiSettingsState(next)
+          void window.desktopApi.setAiSettings(next)
+        }}
         attachments={attachments}
         attachNotice={attachNotice}
         onPickAttachments={() => void handlePickAttachments()}

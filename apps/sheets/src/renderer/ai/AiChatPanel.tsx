@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AiComposer, AiTypingIndicator } from '@genoffice/ui'
+import { AiComposer, AiTypingIndicator, AiProviderSettings } from '@genoffice/ui'
+import type { AiSettings } from '@genoffice/ai-provider'
 import { GensparkMark } from '../ribbon-icons'
 import type { ChangePlan } from '../../domain/workbook.types'
 import type { AttachmentMeta } from '../../shared/desktop-api'
@@ -78,6 +79,8 @@ export function AiChatPanel({
   onUndo,
   onExpand,
   onCollapse,
+  settings,
+  onChangeSettings,
 }: {
   readonly isOpen: boolean
   /** the workbook has cells with content — empty workbooks get "build me a sheet" copy instead */
@@ -105,6 +108,10 @@ export function AiChatPanel({
   readonly onUndo: () => void
   readonly onExpand: () => void
   readonly onCollapse: () => void
+  /** Current AI settings (provider + per-provider config) for the in-panel editor. */
+  readonly settings?: AiSettings | null | undefined
+  /** Persist a provider/settings change made in the in-panel AI settings popover. */
+  readonly onChangeSettings?: ((settings: AiSettings) => void) | undefined
 }): React.JSX.Element {
   const { t } = useI18n()
   const chatRef = useRef<HTMLDivElement | null>(null)
@@ -113,6 +120,7 @@ export function AiChatPanel({
   const [dragOver, setDragOver] = useState(false)
   const asideRef = useRef<HTMLElement | null>(null)
   const [resizing, setResizing] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   /** Wall-clock start of the current run (aiBusy false→true), drives the elapsed badge */
   const busyStartRef = useRef(0)
   useEffect(() => {
@@ -269,6 +277,14 @@ export function AiChatPanel({
           Genspark
         </span>
         <div className="ai-panel-header-actions">
+          <button
+            className="ai-header-btn"
+            onClick={() => setShowSettings((v) => !v)}
+            title={t('aiSettingsTitle')}
+            aria-expanded={showSettings}
+          >
+            ⚙
+          </button>
           {(chat.length > 0 || historicChat.length > 0) && (
             <button className="ai-header-btn" onClick={onNewChat} title={t('aiNewChat')}>
               <IconNewChat size={15} />
@@ -279,6 +295,15 @@ export function AiChatPanel({
           </button>
         </div>
       </header>
+
+      {showSettings && settings && (
+        <div className="ai-settings-popover">
+          <AiProviderSettings
+            settings={settings}
+            onChange={(next) => onChangeSettings?.(next)}
+          />
+        </div>
+      )}
 
       <div className="ai-chat" ref={chatRef} onScroll={onChatScroll}>
         {/* Past conversation (read-only transcript), shown continuously with the current turn */}

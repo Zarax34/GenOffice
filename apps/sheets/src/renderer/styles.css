@@ -2930,6 +2930,55 @@ textarea:focus {
   background: var(--excel-green);
 }
 
+/* AI provider/settings popover (docs/sheets/slides AI panels) */
+
+.ai-settings-popover {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-strong);
+  background: var(--surface-2, var(--surface));
+}
+
+.ai-settings-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+}
+
+.ai-settings-field span {
+  opacity: 0.75;
+  font-size: 11.5px;
+}
+
+.ai-settings-field input,
+.ai-settings-field select {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-small, 6px);
+  background: var(--surface);
+  color: inherit;
+  font-size: 12.5px;
+}
+
+.ai-settings-field input:focus,
+.ai-settings-field select:focus {
+  border-color: var(--excel-green);
+  outline: none;
+}
+
+.ai-settings-note {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 0;
+}
+
 /* ---- AI chat panel ---- */
 
 .ai-chat {

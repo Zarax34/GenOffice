@@ -14,7 +14,7 @@ import { createFilesSkill } from './files-skill'
 import { createElectronTransport } from './transport'
 import { useI18n, t as tModule, aiLangDirective, type StringKey } from '../i18n/locale'
 import { Markdown } from '@genoffice/ui'
-import { AiComposer, AiTypingIndicator } from '@genoffice/ui'
+import { AiComposer, AiTypingIndicator, AiProviderSettings } from '@genoffice/ui'
 import { GensparkMark } from '../components/icons'
 import sendEnterOn from '../assets/send-enter-on.png'
 import sendEnterOff from '../assets/send-enter-off.png'
@@ -135,6 +135,8 @@ interface AiPanelProps {
   onExpand?: () => void
   /** collapse the panel to the sidebar rail */
   onCollapse?: () => void
+  /** persist a provider/settings change made in the in-panel AI settings popover */
+  onChangeSettings?: (settings: AiSettings) => void
   /** Absolute path of the currently open file (used for chat-history persistence) */
   filePath?: string | null
 }
@@ -149,6 +151,7 @@ export function AiPanel({
   open = true,
   onExpand,
   onCollapse,
+  onChangeSettings,
   filePath,
 }: AiPanelProps) {
   const { t } = useI18n()
@@ -167,6 +170,7 @@ export function AiPanel({
   const [dragOver, setDragOver] = useState(false)
   const [panelWidth, setPanelWidth] = useState(loadPanelWidth)
   const [resizing, setResizing] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const asideRef = useRef<HTMLElement>(null)
 
   // The .ai-dock wrapper owns the animated width (Excel-parity 180ms slide);
@@ -730,6 +734,14 @@ export function AiPanel({
           {t('aiPanelTitle')}
         </span>
         <div className="ai-panel-header-actions">
+          <button
+            className="ai-header-btn"
+            onClick={() => setShowSettings((v) => !v)}
+            title={t('appAiSettings')}
+            aria-expanded={showSettings}
+          >
+            ⚙
+          </button>
           {chat.length > 0 && (
             <button className="ai-header-btn" onClick={newChat} title={t('aiNewChatTitle')}>
               <IconNewChat size={16} />
@@ -742,6 +754,15 @@ export function AiPanel({
           )}
         </div>
       </div>
+
+      {showSettings && (
+        <div className="ai-settings-popover">
+          <AiProviderSettings
+            settings={settings}
+            onChange={(next) => onChangeSettings?.(next)}
+          />
+        </div>
+      )}
 
       <div ref={logRef} className="ai-chat" onScroll={onLogScroll}>
         {/* past conversation (read-only transcript, not fed to the model), shown continuously with the current turn */}

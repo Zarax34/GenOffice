@@ -2362,6 +2362,10 @@ export function App() {
                   open={showAi}
                   onExpand={toggleAi}
                   onCollapse={toggleAi}
+                  onChangeSettings={(next) => {
+                    setAiSettings(next)
+                    void window.slidesApi.setAiSettings(next)
+                  }}
                   onUndo={() => void undo()}
                   onPathChange={(p) => {
                     setPath(p)

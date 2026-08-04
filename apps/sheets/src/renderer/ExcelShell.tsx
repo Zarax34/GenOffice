@@ -19,6 +19,7 @@ import { type SelectionFormat } from './selection-format'
 import type { ChartSeriesVisualState } from '../domain/chart-visual'
 import type { ChangePlan } from '../domain/workbook.types'
 import type { AttachmentMeta } from '../shared/desktop-api'
+import type { AiSettings } from '@genoffice/ai-provider'
 import { AiChatPanel, type AiChatMessage } from './ai/AiChatPanel'
 import {
   PivotDialog,
@@ -143,6 +144,10 @@ interface ExcelShellProps {
   readonly onNewChat: () => void
   readonly onUndo: () => void
   readonly onCommand: (command: string) => void
+  /// Current AI settings (provider + per-provider config) for the in-panel editor.
+  readonly aiSettings?: AiSettings | null | undefined
+  /// Persist a provider/settings change made in the in-panel AI settings popover.
+  readonly onChangeAiSettings?: ((settings: AiSettings) => void) | undefined
   /// Left side of the status bar (ready / streaming / AI progress messages).
   readonly statusMessage: string
   /// Zoom of the active sheet in percent, echoed by the status-bar slider.
@@ -256,6 +261,8 @@ export function ExcelShell({
   onNewChat,
   onUndo,
   onCommand,
+  aiSettings,
+  onChangeAiSettings,
   statusMessage,
   zoomPercent,
   canSave,
@@ -436,6 +443,8 @@ export function ExcelShell({
           onStop={onStop}
           onNewChat={onNewChat}
           onUndo={onUndo}
+          settings={aiSettings}
+          onChangeSettings={onChangeAiSettings}
           onExpand={() => setIsCopilotOpen(true)}
           onCollapse={() => setIsCopilotOpen(false)}
         />

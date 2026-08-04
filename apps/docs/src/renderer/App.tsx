@@ -2507,6 +2507,10 @@ export function App() {
               open={showAi}
               onExpand={() => setShowAi(true)}
               onCollapse={() => setShowAi(false)}
+              onChangeSettings={(next) => {
+                setSettings(next)
+                void window.desktop.setAiSettings(next)
+              }}
               filePath={doc?.filePath ?? null}
             />
           </div>
